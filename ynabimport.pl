@@ -6,55 +6,87 @@
 use warnings;
 use strict;
 use Getopt::Std;
+use 5.010;
+use Encode qw/from_to/;
 
-print "Date,Payee,Category,Memo,Outflow,Inflow\n";
-
-# Expect CR as well as LF
+# Accept CR as well as LF in input files
 $/="\r\n";
-# Separate print output with a comma
-$,=',';
-# Field separator in the bank export
-my $FS=";";
 
-my $bank=\&skandiabanken;
-our $opt_b;
+my $parser=\&skandiabanken;
+my $encoding='iso-8859-1';
+our ($opt_b, $opt_i);
 
-getopts('b:');
+my %parsers = (
+	'dnb' => \&dnb,
+	'skandiabanken' => \&skandiabanken,
+);
+
+getopts('b:i:');
 
 if ($opt_b) {
-	$opt_b =~ /^d/ && ($bank = \&dnb);
-	$opt_b =~ /^s/ && ($bank = \&skandiabanken);
+	my @p = grep /^$opt_b/, %parsers;
+	if (!@p) {
+		print STDERR "$0: unsupported bank '$opt_b'\n";
+		exit 1;
+	} elsif (@p > 1) {
+		print STDERR "$0: multiple banks match '$opt_b': @p\n";
+		exit 1;
+	}
+	$parser = $parsers{$p[0]};
+}
+
+if ($opt_i) {
+	$encoding = $opt_i;
 }
 
 sub skandiabanken {
-	while(<>) {
-		chomp;
-		s/"//g;
-		s/,/./g;
-		my @F = split($FS);
-		if (scalar(@F) > 0 && $F[0] =~ /(\d{4})-(\d{2})-(\d{2})/) {
-			$F[0] =~ s@(\d{4})-(\d{2})-(\d{2})@$3/$2/$1@;
-			# If we have a 'credit' value, stick it in the 'debit' column as a negative
-			my $val = scalar(@F)==7 && $F[6] ne ''?'-'.$F[6]:$F[5];
-			print $F[0], $F[4], "", "", $val . "\n";
-		}
+	my %result;
+	s/"//g;
+	s/,/./g;
+	my @F = split(';');
+	if (scalar(@F) > 0 && $F[0] =~ /(\d{4})-(\d{2})-(\d{2})/) {
+		$result{'day'} = $3;
+		$result{'month'} = $2;
+		$result{'year'} = $1;
+		$result{'value'} = scalar(@F)==7 && $F[6] ne ''?'-'.$F[6]:$F[5];
+		$result{'description'} = $F[4];
+	} else {
+		return;
 	}
+	return %result;
 }
 
 sub dnb {
-	print STDERR "WARNING: DNB support is COMPLETELY untested\n";
-	print STDERR "WARNING: Nothing prevents it from eating your cat\n";
-	while(<>) {
-		chomp;
-		s/"//g;
-		s/,/./g;
-		my @F = split($FS);
-		if (scalar(@F) > 0 && $F[0] =~ /(\d{2})\.(\d{2})\.(\d{4})/) {
-			$F[0] =~ s@(\d{2})\.(\d{2})\.(\d{4})@$1/$2/$3@;
-			my $val = scalar(@F)==5 && $F[4] ne ''?'-'.$F[4]:$F[3];
-			print $F[0], $F[1], "", "", $val . "\n";
-		}
+	state $warned = 0;
+	if (!$warned) {
+		print STDERR "WARNING: DNB support is COMPLETELY untested\n";
+		print STDERR "WARNING: Nothing prevents it from eating your cat\n";
+		$warned = 1;
 	}
+	my %result;
+	s/"//g;
+	s/,/./g;
+	my @F = split(';');
+	if (scalar(@F) > 0 && $F[0] =~ /(\d{2})\.(\d{2})\.(\d{4})/) {
+		$result{'day'} = $1;
+		$result{'month'} = $2;
+		$result{'year'} = $3;
+		$result{'value'} = scalar(@F)==5 && $F[4] ne ''?'-'.$F[4]:$F[3];
+		$result{'description'} = $F[1];
+	} else {
+		return;
+	}
+	return %result;
 }
 
-&$bank;
+print "Date,Payee,Category,Memo,Outflow,Inflow\n";
+
+while(<>) {
+	chomp;
+	from_to($_, $encoding, 'utf-8');
+	my %trans = &$parser($_);
+	next if (!%trans);
+	$,=',';
+	$\="\n";
+	print "$trans{'year'}-$trans{'month'}-$trans{'day'}", $trans{'description'}, "", "", $trans{'value'};
+}
