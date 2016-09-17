@@ -1,6 +1,7 @@
 #!/usr/bin/awk -f
 # Cook data from skandiabanken for import into YNAB
 # James McDonald <james@jamesmcdonald.com>
+# Old awk version - perl version is current
 
 BEGIN {
     print "Date,Payee,Category,Memo,Outflow,Inflow";
