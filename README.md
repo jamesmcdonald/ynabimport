@@ -37,9 +37,9 @@ doesn't work very well with 'Siste 30 dager' because there are usually
 uncleared junk transactions at the top that just say 'Varekjøp'. I usually do
 from a couple of days before the last import until yesterday.
 
-Click 'Last ned', 'CSV'
-Select the defaults:
-  Skilletegn: Semikolon
-  Decimaltegn: Komma
-Click 'Last ned CSV'
+* Click 'Last ned', 'CSV'
+* Select the defaults
+  * Skilletegn: Semikolon
+  * Decimaltegn: Komma
+* Click 'Last ned CSV'
 
