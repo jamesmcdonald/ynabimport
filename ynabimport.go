@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/paulrosania/go-charset/charset"
 	_ "github.com/paulrosania/go-charset/data"
+	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -39,8 +41,9 @@ func parseline(source string) transaction {
 	return transaction{}
 }
 
-func main() {
-	r, _ := charset.NewReader("latin1", os.Stdin)
+func processfile(rawin io.Reader, rawout io.Writer) {
+	out := bufio.NewWriter(rawout)
+	r, _ := charset.NewReader("latin1", rawin)
 	scanner := bufio.NewScanner(r)
 	var ledger []transaction
 	for scanner.Scan() {
@@ -51,8 +54,35 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
-	fmt.Println("Date,Payee,Category,Memo,Outflow,Inflow")
+	fmt.Fprintf(out, "%s\n", "Date,Payee,Category,Memo,Outflow,Inflow")
 	for _, t := range ledger {
-		fmt.Println(t.String())
+		fmt.Fprintf(out, "%s\n", t.String())
+	}
+	out.Flush()
+}
+
+func main() {
+	var in *os.File
+	var out *os.File
+	for _, filename := range os.Args[1:] {
+		if filename == "-" {
+			in = os.Stdin
+			out = os.Stdout
+		} else {
+			var err error
+			in, err = os.Open(filename)
+			if err != nil {
+				panic(err)
+			}
+			defer in.Close()
+			outfilename := strings.TrimSuffix(filename, filepath.Ext(filename)) + ".ynabimport.csv"
+			out, err = os.Create(outfilename)
+			if err != nil {
+				panic(err)
+			}
+			defer out.Close()
+		}
+		processfile(in, out)
 	}
 }
+
