@@ -23,6 +23,11 @@ type Importer interface {
 	Processfile(io.Reader, io.Writer)
 }
 
+var importlist []struct {
+	alias    string
+	importer Importer
+}
+
 func (t *transaction) String() string {
 	return fmt.Sprintf("%s,%s,,,%s", t.date, t.desc, t.value)
 }
