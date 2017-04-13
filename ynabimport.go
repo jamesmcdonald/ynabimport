@@ -23,9 +23,23 @@ type Importer interface {
 	Processfile(io.Reader, io.Writer)
 }
 
-var importlist []struct {
-	alias    string
+var importlist map[string][struct {
+	encoding    string
 	importer Importer
+}]
+
+func NewImporter(format string) (Importer, error) {
+	i, exists := importers[format]
+	if !exists {
+		return nil, Errorf("unknown format %s", format)
+	}
+	i := Importer{}
+	i.encoding = importers[format].encoding
+}
+
+func init() {
+	importlist = {
+		{"skandiabanken", {
 }
 
 func (t *transaction) String() string {

@@ -28,7 +28,12 @@ func main() {
 
 	flag.Parse()
 
-	var importer ynabimport.Importer
+	importer, err := ynab.NewImporter(format)
+	if err != nil {
+		fmt.Fprintf(stderr, "%s: could not create importer: %s\n", os.Args[0], err)
+		os.Exit(1)
+	}
+
 	switch format {
 	case "skandiabanken":
 		importer = ynabimport.SkandiabankenImporter{}
