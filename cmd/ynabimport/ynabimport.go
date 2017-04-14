@@ -70,5 +70,6 @@ func main() {
 			}
 		}
 		importer.Processfile(in, out)
+		err := ynab.ConvertFile(in, out, format)
 	}
 }

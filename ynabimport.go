@@ -19,14 +19,12 @@ type transaction struct {
 	value string
 }
 
-type Importer interface {
+type Format interface {
 	Processfile(io.Reader, io.Writer)
 }
 
-var importlist map[string][struct {
-	encoding    string
-	importer Importer
-}]
+var formats map[string]Format
+var aliases map[string]string
 
 func NewImporter(format string) (Importer, error) {
 	i, exists := importers[format]
@@ -38,8 +36,9 @@ func NewImporter(format string) (Importer, error) {
 }
 
 func init() {
-	importlist = {
-		{"skandiabanken", {
+	formats = map[string]string{
+		"Skandiabanken": &SkandiaFormat{},
+	}
 }
 
 func (t *transaction) String() string {
@@ -78,6 +77,7 @@ func (importer SkandiabankenImporter) Processfile(rawin io.Reader, rawout io.Wri
 		}
 	}
 	if err := scanner.Err(); err != nil {
+		// TODO decide what should happen here
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
 	fmt.Fprintf(out, "%s\n", "Date,Payee,Category,Memo,Outflow,Inflow")
@@ -85,4 +85,9 @@ func (importer SkandiabankenImporter) Processfile(rawin io.Reader, rawout io.Wri
 		fmt.Fprintf(out, "%s\n", t.String())
 	}
 	out.Flush()
+}
+
+func Blah(rawin io.Reader, rawout io.Writer, formatName string) {
+	format := makeMeAFormat(formatName)
+	format.Processfile(rawin, rawout)
 }
