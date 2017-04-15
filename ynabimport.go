@@ -17,6 +17,18 @@ type Transaction struct {
 	value string
 }
 
+type Ledger []Transaction
+
+func (ledger *Ledger) String() string {
+	var buffer bytes.Buffer
+	buffer.WriteString("Date,Payee,Category,Memo,Outflow,Inflow\n")
+	for _, t := range ledger {
+		buffer.WriteString(t)
+		buffer.WriteRune('\n')
+	}
+	return buffer.String()
+}
+
 type Reader interface {
 	Read() (t Transaction)
 	ReadAll() (t []Transaction)
@@ -44,7 +56,9 @@ func (t *Transaction) String() string {
 	return fmt.Sprintf("%s,%s,,,%s", t.date, t.desc, t.value)
 }
 
-type SkandiaFormat struct{}
+type SkandiaFormat struct {
+	encoding string
+}
 
 var match = regexp.MustCompile(`^([0-9]{4})-([0-9]{2})-([0-9]{2})$`)
 
@@ -65,12 +79,11 @@ func parseline(source string) Transaction {
 	return Transaction{}
 }
 
-func (reader SkandiaReader) Read()
-func (importer SkandiabankenImporter) Processfile(rawin io.Reader, rawout io.Writer) {
+func (format SkandiaFormat) Processfile(rawin io.Reader, rawout io.Writer) {
 	out := bufio.NewWriter(rawout)
-	r, _ := charset.NewReader("latin1", rawin)
+	r, _ := charset.NewReader(format.encoding, rawin)
 	scanner := bufio.NewScanner(r)
-	var ledger []Transaction
+	var ledger Ledger
 	for scanner.Scan() {
 		if t := parseline(scanner.Text()); len(t.value) > 0 {
 			ledger = append(ledger, t)
@@ -80,10 +93,7 @@ func (importer SkandiabankenImporter) Processfile(rawin io.Reader, rawout io.Wri
 		// TODO decide what should happen here
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
-	fmt.Fprintf(out, "%s\n", "Date,Payee,Category,Memo,Outflow,Inflow")
-	for _, t := range ledger {
-		fmt.Fprintf(out, "%s\n", t.String())
-	}
+	fmt.Fprint(out, ledger)
 	out.Flush()
 }
 
