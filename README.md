@@ -3,24 +3,52 @@
 Cook data from banks for import into YNAB.  Entirely based on
 guesswork and reverse-engineering from failures, so ymmv.
 
+## Building
+
+I have re-implemented this in Go. Check out the `perl` branch for the old perl
+version. It's much easier to make self-contained multi-platform binaries with
+Go. I intend to build some soon so you don't have to build it yourself.
+
+To build from source, you need Go installed and your `$GOPATH` set up. Then it's as easy as:
+```
+  go get github.com/jamesmcdonald/ynabimport
+```
+
 ## Running
 
-You need to run this script from a terminal where you have perl
-available. On Linux or MacOS, you should be fine; on Windows you'll need
-to install cygwin or msys or something.
+I have designed the default behaviour in such a way that you can either use
+`ynabimport` from the command line or by simply dropping files on it.
 
-Run this script with something like:
+Run with something like:
 ```
-  perl ynabimport.pl -b bank 8888888888_2016_07_12-2016_08_05.csv > ~/Desktop/import.csv
+  ynabimport 8888888888_2016_07_12-2016_08_05.csv
 ```
 
 Where `8888888888_2016_07_12-2016_08_05.csv` is the file you downloaded
-from the bank, and `bank` is the name of your bank. Currently supported
-banks are 'skandiabanken' and 'dnb'.
+from the bank. By default, it expects the format Skandiabanken uses.
 
-Drag the resulting import.csv from your desktop into YNAB! You will need
-to mess around with the payee names. At the moment the support for payee
-name matching in new YNAB is pretty weak.
+In a GUI, just drop your files on the `ynabimport` icon.
+
+This will create a file (or files) in the same place as the original with the
+same base name, but with the extension `.ynabimport.csv`. In our example, the
+new file would be called `8888888888_2016_07_12-2016_08_05.ynabimport.csv`.
+
+Drag the resulting CSV from your desktop into YNAB. Behold the magic! You will
+almost certainly need to mess around with the payee names.
+
+### But I don't use Skandiabanken!
+
+I have added support for DnB as well, possibly with other banks to follow.
+Changing format is slightly more complicated, but not terribly. From the
+command line it's just:
+
+```
+  ynabimport -format dnb somefile.csv
+```
+
+To be able to drag-and-drop, you'll have to make a new shortcut, and set the
+target to include the `format` option, for example `"C:\Program Files\Awesome
+Programs\ynabimport.exe" -format dnb`.
 
 ## Getting data
 
@@ -42,4 +70,3 @@ from a couple of days before the last import until yesterday.
   * Skilletegn: Semikolon
   * Decimaltegn: Komma
 * Click 'Last ned CSV'
-
