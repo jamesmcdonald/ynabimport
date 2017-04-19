@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/paulrosania/go-charset/charset"
+	_ "github.com/paulrosania/go-charset/data"
 )
 
 type Transaction struct {

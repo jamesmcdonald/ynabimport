@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	_ "github.com/paulrosania/go-charset/data"
 )
 
 func init() {
