@@ -9,7 +9,7 @@ import (
 func init() {
 	formats["Skandiabanken"] = Reader{
 		encoding:  "latin1",
-		parseline: SkandiaParseLine,
+		parseline: skandiaParseLine,
 	}
 	aliases["skandiabanken"] = "Skandiabanken"
 	aliases["skandia"] = "Skandiabanken"
@@ -21,7 +21,7 @@ type SkandiaFormat struct {
 
 var match = regexp.MustCompile(`^([0-9]{4})-([0-9]{2})-([0-9]{2})$`)
 
-func SkandiaParseLine(source string) Transaction {
+func skandiaParseLine(source string) Transaction {
 	source = strings.Replace(source, `"`, "", -1)
 	source = strings.Replace(source, ",", ".", -1)
 	parts := strings.Split(source, ";")
