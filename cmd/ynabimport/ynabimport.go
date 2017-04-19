@@ -28,19 +28,11 @@ func main() {
 
 	flag.Parse()
 
-	importer, err := ynab.NewImporter(format)
-	if err != nil {
-		fmt.Fprintf(stderr, "%s: could not create importer: %s\n", os.Args[0], err)
-		os.Exit(1)
-	}
-
-	switch format {
-	case "skandiabanken":
-		importer = ynabimport.SkandiabankenImporter{}
-	default:
-		fmt.Fprintf(os.Stderr, "unknown format %s\n", format)
-		os.Exit(2)
-	}
+	reader := ynabimport.NewReader(format)
+	//	if err != nil {
+	//		fmt.Fprintf(stderr, "%s: could not create reader: %s\n", os.Args[0], err)
+	//		os.Exit(1)
+	//	}
 
 	files := flag.Args()
 	if len(files) == 0 {
@@ -69,7 +61,6 @@ func main() {
 				defer out.Close()
 			}
 		}
-		importer.Processfile(in, out)
-		err := ynab.ConvertFile(in, out, format)
+		reader.Process(in, out)
 	}
 }
