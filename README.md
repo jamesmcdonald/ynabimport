@@ -11,7 +11,7 @@ Go. I intend to build some soon so you don't have to build it yourself.
 
 To build from source, you need Go installed and your `$GOPATH` set up. Then it's as easy as:
 ```
-  go get github.com/jamesmcdonald/ynabimport
+  go get github.com/jamesmcdonald/ynabimport/...
 ```
 
 ## Running
