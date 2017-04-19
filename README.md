@@ -3,6 +3,8 @@
 Cook data from banks for import into YNAB.  Entirely based on
 guesswork and reverse-engineering from failures, so ymmv.
 
+[![Build Status](https://travis-ci.org/jamesmcdonald/ynabimport.svg?branch=master)](https://travis-ci.org/jamesmcdonald/ynabimport)
+
 ## Building
 
 I have re-implemented this in Go. Check out the `perl` branch for the old perl
