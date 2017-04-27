@@ -17,7 +17,7 @@ type Transaction struct {
 	value string
 }
 
-func (t *Transaction) String() string {
+func (t Transaction) String() string {
 	return fmt.Sprintf("%s,%s,,,%s", t.date, t.desc, t.value)
 }
 
@@ -41,18 +41,17 @@ func (reader *Reader) Process(rawin io.Reader, rawout io.Writer) {
 		// TODO decide what should happen here
 		fmt.Fprintln(os.Stderr, "reading input:", err)
 	}
-	fmt.Fprint(out, ledger.String())
+	fmt.Fprint(out, ledger)
 	out.Flush()
 }
 
 type Ledger []Transaction
 
-func (ledger *Ledger) String() string {
+func (ledger Ledger) String() string {
 	var buffer bytes.Buffer
 	buffer.WriteString("Date,Payee,Category,Memo,Outflow,Inflow\n")
-	for _, t := range *ledger {
-		buffer.WriteString(t.String())
-		buffer.WriteRune('\n')
+	for _, t := range ledger {
+		fmt.Fprintf(&buffer, "%s\n", t)
 	}
 	return buffer.String()
 }
