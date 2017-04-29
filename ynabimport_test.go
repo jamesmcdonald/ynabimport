@@ -27,3 +27,7 @@ func TestSkandiaInput(t *testing.T) {
 		t.Errorf("Incorrect skandia result %s\n", result)
 	}
 }
+
+func TestNonAliasedLookup(t *testing.T) {
+	NewReader("Skandiabanken")
+}
