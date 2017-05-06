@@ -1,27 +1,22 @@
-package ynabimport
+package skandia
 
 import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/jamesmcdonald/ynabimport"
 )
 
 func init() {
-	formats["Skandiabanken"] = Reader{
-		encoding:  "latin1",
-		parseline: skandiaParseLine,
-	}
-	aliases["skandiabanken"] = "Skandiabanken"
-	aliases["skandia"] = "Skandiabanken"
-}
-
-type SkandiaFormat struct {
-	encoding string
+	ynabimport.RegisterFormat("Skandiabanken", "latin1", parseLine)
+	ynabimport.RegisterAlias("skandia", "Skandiabanken")
+	ynabimport.RegisterAlias("skandiabanken", "Skandiabanken")
 }
 
 var match = regexp.MustCompile(`^([0-9]{4})-([0-9]{2})-([0-9]{2})$`)
 
-func skandiaParseLine(source string) Transaction {
+func parseLine(source string) ynabimport.Transaction {
 	source = strings.Replace(source, `"`, "", -1)
 	source = strings.Replace(source, ",", ".", -1)
 	parts := strings.Split(source, ";")
@@ -32,8 +27,8 @@ func skandiaParseLine(source string) Transaction {
 		} else {
 			value = parts[5]
 		}
-		t := Transaction{fmt.Sprintf("%s-%s-%s", ymd[1], ymd[2], ymd[3]), parts[4], value}
+		t := ynabimport.Transaction{fmt.Sprintf("%s-%s-%s", ymd[1], ymd[2], ymd[3]), parts[4], value}
 		return t
 	}
-	return Transaction{}
+	return ynabimport.Transaction{}
 }

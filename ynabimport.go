@@ -12,13 +12,13 @@ import (
 )
 
 type Transaction struct {
-	date  string
-	desc  string
-	value string
+	Date  string
+	Desc  string
+	Value string
 }
 
 func (t Transaction) String() string {
-	return fmt.Sprintf("%s,%s,,,%s", t.date, t.desc, t.value)
+	return fmt.Sprintf("%s,%s,,,%s", t.Date, t.Desc, t.Value)
 }
 
 type Reader struct {
@@ -33,7 +33,7 @@ func (reader *Reader) Process(rawin io.Reader, rawout io.Writer) {
 	scanner := bufio.NewScanner(r)
 	var ledger Ledger
 	for scanner.Scan() {
-		if t := reader.parseline(scanner.Text()); len(t.value) > 0 {
+		if t := reader.parseline(scanner.Text()); len(t.Value) > 0 {
 			ledger = append(ledger, t)
 		}
 	}
@@ -59,10 +59,37 @@ func (ledger Ledger) String() string {
 var formats map[string]Reader = make(map[string]Reader)
 var aliases map[string]string = make(map[string]string)
 
+func RegisterFormat(name string, encoding string, parseline func(string) Transaction) {
+	formats[name] = Reader{encoding, parseline}
+}
+
+func RegisterAlias(alias string, name string) {
+	aliases[alias] = name
+}
+
 func NewReader(alias string) Reader {
 	name, ok := aliases[alias]
 	if !ok {
 		name = alias
 	}
 	return formats[name]
+}
+
+func ListFormats() string {
+	var buf bytes.Buffer
+	var formatAliases []string
+	for format := range formats {
+		formatAliases = []string{}
+		for alias, name := range aliases {
+			if name == format && alias != format {
+				formatAliases = append(formatAliases, alias)
+			}
+		}
+		if len(formatAliases) > 0 {
+			fmt.Fprintf(&buf, "%s %v\n", format, formatAliases)
+		} else {
+			fmt.Fprintf(&buf, "%s\n", format)
+		}
+	}
+	return buf.String()
 }

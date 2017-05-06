@@ -3,10 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/jamesmcdonald/ynabimport"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/jamesmcdonald/ynabimport"
+	_ "github.com/jamesmcdonald/ynabimport/dnb"
+	_ "github.com/jamesmcdonald/ynabimport/skandia"
 )
 
 var format string
@@ -18,7 +21,7 @@ func init() {
 		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
 	}
-	flag.StringVar(&format, "format", "skandiabanken", "the file format to import")
+	flag.StringVar(&format, "format", "skandiabanken", "the file format to import ('list' to list available formats)")
 	flag.BoolVar(&stdout, "stdout", false, "write to stdout instead of matching files")
 }
 
@@ -27,6 +30,11 @@ func main() {
 	var out *os.File
 
 	flag.Parse()
+
+	if format == "list" {
+		fmt.Print(ynabimport.ListFormats())
+		return
+	}
 
 	reader := ynabimport.NewReader(format)
 	//	if err != nil {
