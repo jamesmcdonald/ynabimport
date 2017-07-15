@@ -27,7 +27,7 @@ func parseLine(source string) convert.Transaction {
 		} else {
 			value = parts[5]
 		}
-		t := ynabimport.Transaction{
+		t := convert.Transaction{
 			Date:  fmt.Sprintf("%s-%s-%s", ymd[1], ymd[2], ymd[3]),
 			Desc:  parts[4],
 			Value: value,
