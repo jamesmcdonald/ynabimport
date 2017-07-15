@@ -1,9 +1,12 @@
-package ynabimport
+package ynabimport_test
 
 import (
 	"bytes"
 	"strings"
 	"testing"
+
+	. "github.com/jamesmcdonald/ynabimport"
+	_ "github.com/jamesmcdonald/ynabimport/skandia"
 )
 
 func TestEmptyInput(t *testing.T) {
