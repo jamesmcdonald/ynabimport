@@ -5,18 +5,18 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jamesmcdonald/ynabimport"
+	"github.com/jamesmcdonald/ynabimport/convert"
 )
 
 func init() {
-	ynabimport.RegisterFormat("Skandiabanken", "latin1", parseLine)
-	ynabimport.RegisterAlias("skandia", "Skandiabanken")
-	ynabimport.RegisterAlias("skandiabanken", "Skandiabanken")
+	convert.RegisterFormat("Skandiabanken", "latin1", parseLine)
+	convert.RegisterAlias("skandia", "Skandiabanken")
+	convert.RegisterAlias("skandiabanken", "Skandiabanken")
 }
 
 var match = regexp.MustCompile(`^([0-9]{4})-([0-9]{2})-([0-9]{2})$`)
 
-func parseLine(source string) ynabimport.Transaction {
+func parseLine(source string) convert.Transaction {
 	source = strings.Replace(source, `"`, "", -1)
 	source = strings.Replace(source, ",", ".", -1)
 	parts := strings.Split(source, ";")
@@ -34,5 +34,5 @@ func parseLine(source string) ynabimport.Transaction {
 		}
 		return t
 	}
-	return ynabimport.Transaction{}
+	return convert.Transaction{}
 }
