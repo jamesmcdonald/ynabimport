@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	. "github.com/jamesmcdonald/ynabimport/convert"
+	_ "github.com/jamesmcdonald/ynabimport/convert/dnb"
 	_ "github.com/jamesmcdonald/ynabimport/convert/skandia"
 )
 
@@ -33,4 +34,17 @@ func TestSkandiaInput(t *testing.T) {
 
 func TestNonAliasedLookup(t *testing.T) {
 	NewReader("Skandiabanken")
+}
+
+func TestFormatLoaded(t *testing.T) {
+	RegisterFormat("Unaliasedformat", "utf8", nil)
+	lf := strings.Split(strings.TrimSpace(ListFormats()), "\n")
+	for _, format := range lf {
+		if format != "Skandiabanken [skandia skandiabanken]" &&
+			format != "Skandiabanken [skandiabanken skandia]" &&
+			format != "DnB [dnb]" &&
+			format != "Unaliasedformat" {
+			t.Errorf("Incorrect format line \"%s\"\n", format)
+		}
+	}
 }
