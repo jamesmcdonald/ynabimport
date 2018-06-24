@@ -27,7 +27,7 @@ type TestCase struct {
 func TestParseLine(t *testing.T) {
 	cases := []TestCase{
 		TestCase{
-			Input: `"2017-07-10";"2017-07-10";"12345678901";"Varekjøp";"10.07 411021 Vendor Inc Somestreet";47,00;`,
+			Input: `"2017-07-10";"2017-07-10";"12345678901";"NO1200000000000";"Varekjøp";"10.07 411021 Vendor Inc Somestreet";47,00;`,
 			Output: convert.Transaction{
 				Date:  "2017-07-10",
 				Desc:  "10.07 411021 Vendor Inc Somestreet",
@@ -35,7 +35,7 @@ func TestParseLine(t *testing.T) {
 			},
 		},
 		TestCase{
-			Input: `"2017-07-10";"2017-07-10";"12345678901";"Varekjøp";"08.07 Kiwi 369 Øvre Åsæs 💩";665,27;`,
+			Input: `"2017-07-10";"2017-07-10";"12345678901";"NO1200000000000";"Varekjøp";"08.07 Kiwi 369 Øvre Åsæs 💩";665,27;`,
 			Output: convert.Transaction{
 				Date:  "2017-07-10",
 				Desc:  "08.07 Kiwi 369 Øvre Åsæs 💩",
@@ -53,7 +53,7 @@ func TestParseLine(t *testing.T) {
 func TestParseLineWithCommaMakesDot(t *testing.T) {
 	cases := []TestCase{
 		TestCase{
-			Input: `"2017-07-10";"2017-07-10";"12345678901";"Varekjøp";"10.07 411021 Vendor, Inc Somestreet";47,00;`,
+			Input: `"2017-07-10";"2017-07-10";"12345678901";"NO1200000000000";"Varekjøp";"10.07 411021 Vendor, Inc Somestreet";47,00;`,
 			Output: convert.Transaction{
 				Date:  "2017-07-10",
 				Desc:  "10.07 411021 Vendor. Inc Somestreet",
