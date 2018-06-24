@@ -22,14 +22,14 @@ func parseLine(source string) convert.Transaction {
 	parts := strings.Split(source, ";")
 	if ymd := match.FindStringSubmatch(parts[0]); len(ymd) > 0 {
 		var value string
-		if len(parts) == 7 && parts[6] != "" {
-			value = "-" + parts[6]
+		if len(parts) == 8 && parts[7] != "" {
+			value = "-" + parts[7]
 		} else {
-			value = parts[5]
+			value = parts[6]
 		}
 		t := convert.Transaction{
 			Date:  fmt.Sprintf("%s-%s-%s", ymd[1], ymd[2], ymd[3]),
-			Desc:  parts[4],
+			Desc:  parts[5],
 			Value: value,
 		}
 		return t
