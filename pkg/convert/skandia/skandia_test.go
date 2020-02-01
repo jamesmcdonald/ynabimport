@@ -3,7 +3,7 @@ package skandia
 import (
 	"testing"
 
-	"github.com/jamesmcdonald/ynabimport/convert"
+	"github.com/jamesmcdonald/ynabimport/pkg/convert"
 )
 
 func TestDateParse(t *testing.T) {

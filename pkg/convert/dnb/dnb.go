@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jamesmcdonald/ynabimport/convert"
+	"github.com/jamesmcdonald/ynabimport/pkg/convert"
 )
 
 func init() {

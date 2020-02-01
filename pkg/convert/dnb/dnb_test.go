@@ -3,7 +3,7 @@ package dnb
 import (
 	"testing"
 
-	"github.com/jamesmcdonald/ynabimport/convert"
+	"github.com/jamesmcdonald/ynabimport/pkg/convert"
 )
 
 func TestMatch(t *testing.T) {

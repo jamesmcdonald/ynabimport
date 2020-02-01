@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jamesmcdonald/ynabimport/convert"
-	_ "github.com/jamesmcdonald/ynabimport/convert/dnb"
-	_ "github.com/jamesmcdonald/ynabimport/convert/skandia"
+	"github.com/jamesmcdonald/ynabimport/pkg/convert"
+	_ "github.com/jamesmcdonald/ynabimport/pkg/convert/dnb"
+	_ "github.com/jamesmcdonald/ynabimport/pkg/convert/skandia"
 )
 
 var format string
