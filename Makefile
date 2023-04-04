@@ -22,7 +22,7 @@ test_coverage:
 	go test -cover ./...
 
 clean:
-	rm -f $(target)
+	rm -rf $(target) release build
 
 $(target): $(sources)
 	go build -o $@ $^
