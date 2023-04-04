@@ -19,7 +19,7 @@ jobs:
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "releases/*.tar.gz,releases/*.zip"
+        artifacts: "release/*.tar.gz,release/*.zip"
         body: "This is a test release."
 
 
