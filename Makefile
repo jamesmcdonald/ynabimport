@@ -9,7 +9,7 @@ archbuild = \
 	tar cvzf release/$(name)_$(version)_$(1)_$(2).tar.gz -C build $(1)_$(2) \
 	, \
 	cd build; zip -r ../release/$(name)_$(version)_$(1)_$(2).zip $(1)_$(2) )
-version = $(shell git describe --always --tags --dirty)
+version = $(shell git describe --always --tags --dirty | sed 's/^v//')
 
 .PHONY: test test_coverage clean release install
 
