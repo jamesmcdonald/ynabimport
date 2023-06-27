@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/jamesmcdonald/ynabimport/pkg/convert"
+	_ "github.com/jamesmcdonald/ynabimport/pkg/convert/bulder"
 	_ "github.com/jamesmcdonald/ynabimport/pkg/convert/dnb"
 	_ "github.com/jamesmcdonald/ynabimport/pkg/convert/skandia"
 )
